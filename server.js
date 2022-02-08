@@ -5,6 +5,8 @@
 var express = require('express');
 var app = express();
 
+app.enable('trust proxy');
+
 // enable CORS (https://en.wikipedia.org/wiki/Cross-origin_resource_sharing)
 // so that your API is remotely testable by FCC
 var cors = require('cors');
@@ -19,7 +21,7 @@ app.get("/", function (req, res) {
 });
 
 // Timestamp Microservice API
-app.get("/api/:date?", function (req, res) {
+app.get("/api2/:date?", function (req, res) {
     let date = req.params.date;
     let unix, utc, result;
 
@@ -46,6 +48,19 @@ app.get("/api/:date?", function (req, res) {
         result = {unix: unix,
                   utc: utc};
     }
+
+    res.json(result);
+});
+
+// Request Header Parser Microservice API
+app.get("/api/whoami", function (req, res) {
+    let ip = req.get("X-Forwarded-For");
+    let lang = req.get("accept-language");
+    let info = req.get('user-agent');
+
+    let result = { ipaddress: ip,
+                   language: lang,
+                   software: info };
 
     res.json(result);
 });
