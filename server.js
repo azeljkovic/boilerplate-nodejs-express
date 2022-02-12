@@ -20,8 +20,21 @@ app.get("/", function (req, res) {
   res.sendFile(__dirname + '/views/index.html');
 });
 
+app.get("/1", function (req, res) {
+    res.sendFile(__dirname + '/views/1.html');
+});
+
+app.get("/2", function (req, res) {
+    res.sendFile(__dirname + '/views/2.html');
+});
+
+app.get("/3", function (req, res) {
+    res.sendFile(__dirname + '/views/3.html');
+});
+
+
 // Timestamp Microservice API
-app.get("/api2/:date?", function (req, res) {
+app.get("/api1/:date?", function (req, res) {
     let date = req.params.date;
     let unix, utc, result;
 
@@ -53,7 +66,7 @@ app.get("/api2/:date?", function (req, res) {
 });
 
 // Request Header Parser Microservice API
-app.get("/api/whoami", function (req, res) {
+app.get("/api2/whoami", function (req, res) {
     let ip = req.get("X-Forwarded-For");
     let lang = req.get("accept-language");
     let info = req.get('user-agent');

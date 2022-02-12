@@ -21,8 +21,5 @@
 		"express",
 		"freecodecamp"
 	],
-	"license": "MIT",
-	"devDependencies": {
-		"nodemon": "^2.0.15"
-	}
+	"license": "MIT"
 }
