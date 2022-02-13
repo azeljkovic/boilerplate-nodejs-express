@@ -2,15 +2,33 @@
 // where your node app starts
 
 // init project
-var express = require('express');
-var app = express();
+const express = require('express');
+const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
+const {Schema} = mongoose;
+const app = express();
+require('dotenv').config()
 
 app.enable('trust proxy');
 
 // enable CORS (https://en.wikipedia.org/wiki/Cross-origin_resource_sharing)
 // so that your API is remotely testable by FCC
-var cors = require('cors');
+const cors = require('cors');
 app.use(cors({optionsSuccessStatus: 200}));  // some legacy browsers choke on 204
+
+// connect to MongoDB
+mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+    .catch(error => console.log(error));
+
+const urlSchema = new Schema({
+    url: {
+        type: String,
+        required: true
+    }
+});
+
+let URL = mongoose.model('URL', urlSchema );
+
 
 // http://expressjs.com/en/starter/static-files.html
 app.use(express.static('public'));
@@ -78,7 +96,35 @@ app.get("/api2/whoami", function (req, res) {
     res.json(result);
 });
 
+// URL Shortener Microservice API
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
+app.post('/api3/shorturl', function (req, res) {
+    // const saveURL = (done) => {
+    //     const url = new URL({ url: req.body.url });
+    //     console.log(url);
+    //     url.save(function(err, data) {
+    //         console.log("URL saved to database.")
+    //         if (err) return console.error(err);
+    //         done(null, data);
+    //     });
+    // };
+
+    const saveURL = new URL(req.body);
+    saveURL.save()
+        .then(item => {
+            console.log("ok");
+            console.log(item.id);
+            console.log(saveURL);
+            res.send(`URL is: ${req.body.url}.`);
+        })
+        .catch(err => {
+            res.status(400).send("unable to save to database");
+        });
+
+    console.log(saveURL);
+})
 // listen for requests :)
 var listener = app.listen(3000, function () {
   console.log('Your app is listening on port ' + listener.address().port);
